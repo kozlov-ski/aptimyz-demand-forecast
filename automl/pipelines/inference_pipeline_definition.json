@@ -1,0 +1,31 @@
+{
+    "Version": "2020-12-01",
+    "Metadata": {},
+    "Parameters": [
+        {
+            "Name": "TrainingDataS3",
+            "Type": "String",
+            "Description": "S3 Path to Input Data"
+        },
+        {
+            "Name": "ValidationDataS3",
+            "Type": "String",
+            "Description": "S3 Path to Validation Data"
+        },
+        {
+            "Name": "OutputS3",
+            "Type": "String"
+        },
+        {
+            "Name": "ForecastHorizon",
+            "Type": "Integer",
+            "DefaultValue": 7
+        },
+        {
+            "Name": "TargetAttribute",
+            "Type": "String",
+            "DefaultValue": "sales"
+        }
+    ],
+    "Steps": []
+}

@@ -1,0 +1,67 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "sagemaker:AddTags",
+                "sagemaker:DeleteTags",
+                "sagemaker:ListTags",
+                "sagemaker:CreateProcessingJob",
+                "sagemaker:CreateTrainingJob",
+                "sagemaker:CreateTransformJob",
+                "sagemaker:CreateModel",
+                "sagemaker:CreateEndpoint",
+                "sagemaker:CreateEndpointConfig",
+                "sagemaker:CreatePipeline",
+                "sagemaker:UpdatePipeline",
+                "sagemaker:DeletePipeline",
+                "sagemaker:DescribePipeline",
+                "sagemaker:DescribeProcessingJob",
+                "sagemaker:ListPipelines",
+                "sagemaker:StartPipelineExecution",
+                "sagemaker:DescribePipelineExecution",
+                "sagemaker:ListPipelineExecutions",
+                "sagemaker:StopPipelineExecution",
+                "sagemaker:CreateExperiment",
+                "sagemaker:DescribeExperiment",
+                "sagemaker:ListExperiments",
+                "sagemaker:CreateTrial",
+                "sagemaker:DescribeTrial",
+                "sagemaker:ListTrials"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:PassRole"
+            ],
+            "Resource": "arn:aws:iam::*:role/SageMaker*ExecutionRole",
+            "Condition": {
+                "StringEquals": {
+                    "iam:PassedToService": "sagemaker.amazonaws.com"
+                }
+            }
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ecr:GetAuthorizationToken",
+                "ecr:BatchGetImage",
+                "ecr:GetDownloadUrlForLayer"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+                "logs:DescribeLogStreams"
+            ],
+            "Resource": "arn:aws:logs:*:*:log-group:/aws/sagemaker/pipelines/*"
+        }
+    ]
+}

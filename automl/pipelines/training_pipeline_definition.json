@@ -1,0 +1,99 @@
+{
+    "Version": "2020-12-01",
+    "Metadata": {},
+    "Parameters": [
+        {
+            "Name": "OutputS3Path",
+            "Type": "String",
+            "Description": "S3 Path to output data (reports, models)",
+            "DefaultValue": "s3://sagemaker-forecasting-aptimyz-output"
+        },
+        {
+            "Name": "ForecastHorizon",
+            "Type": "Integer",
+            "DefaultValue": 7
+        },
+        {
+            "Name": "TargetAttribute",
+            "Type": "String",
+            "DefaultValue": "sales"
+        },
+        {
+            "Name": "SageMakerRoleArn",
+            "Type": "String",
+            "Description": "SageMaker execution role ARN",
+            "DefaultValue": "arn:aws:iam::283674368847:role/SageMakerTrainingExecutionRole"
+        }
+    ],
+    "Steps": [
+        {
+            "Name": "DataQualityCheck",
+            "Type": "Processing",
+            "Arguments": {
+                "ProcessingResources": {
+                    "ClusterConfig": {
+                        "InstanceType": "ml.t3.medium",
+                        "InstanceCount": 1,
+                        "VolumeSizeInGB": 30
+                    }
+                },
+                "AppSpecification": {
+                    "ImageUri": "683313688378.dkr.ecr.eu-central-1.amazonaws.com/sagemaker-scikit-learn:0.23-1-cpu-py3",
+                    "ContainerEntrypoint": [
+                        "python3",
+                        "/opt/ml/processing/input/code/data_quality_check.py"
+                    ],
+                    "ContainerArguments": [
+                        "--output-data",
+                        {
+                            "Get": "Parameters.OutputS3Path"
+                        },
+                        "--target",
+                        {
+                            "Get": "Parameters.TargetAttribute"
+                        }
+                    ]
+                },
+                "ProcessingInputs": [
+                    {
+                        "InputName": "input-data",
+                        "S3Input": {
+                            "S3Uri": "s3://sagemaker-forecasting-aptimyz-input/train/train.csv",
+                            "LocalPath": "/opt/ml/processing/input/data",
+                            "S3DataType": "S3Prefix",
+                            "S3InputMode": "File",
+                            "S3DataDistributionType": "FullyReplicated"
+                        }
+                    },
+                    {
+                        "InputName": "code",
+                        "S3Input": {
+                            "S3Uri": "s3://sagemaker-forecasting-aptimyz-input/scripts/data_quality_check.py",
+                            "LocalPath": "/opt/ml/processing/input/code",
+                            "S3DataType": "S3Prefix",
+                            "S3InputMode": "File",
+                            "S3DataDistributionType": "FullyReplicated"
+                        }
+                    }
+                ],
+                "ProcessingOutputConfig": {
+                    "Outputs": [
+                        {
+                            "OutputName": "quality-report",
+                            "S3Output": {
+                                "S3Uri": {
+                                    "Get": "Parameters.OutputS3Path"
+                                },
+                                "LocalPath": "/opt/ml/processing/output/report",
+                                "S3UploadMode": "EndOfJob"
+                            }
+                        }
+                    ]
+                },
+                "RoleArn": {
+                    "Get": "Parameters.SageMakerRoleArn"
+                }
+            }
+        }
+    ]
+}

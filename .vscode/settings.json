@@ -1,0 +1,12 @@
+{
+  "json.schemas": [
+    {
+      "fileMatch": [
+        "automl/pipelines/*.json"
+      ],
+      "url": "https://raw.githubusercontent.com/aws-sagemaker-mlops/sagemaker-model-building-pipeline-definition-JSON-schema/main/schema/pipeline-definition.schema.json"
+    }
+  ],
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "vscode.json-language-features"
+}

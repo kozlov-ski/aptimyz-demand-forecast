@@ -1,0 +1,4 @@
+.venv
+autogluon
+data
+**/__pycache__/
