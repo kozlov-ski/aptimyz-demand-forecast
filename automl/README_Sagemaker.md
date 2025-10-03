@@ -5,6 +5,8 @@ https://docs.aws.amazon.com/sagemaker/latest/dg/timeseries-forecasting-algorithm
 https://sagemaker.readthedocs.io/en/v2.125.0/experiments/index.html
 https://github.com/aws/amazon-sagemaker-examples/blob/main/autopilot/autopilot_time_series.ipynb
 
+https://docs.aws.amazon.com/sagemaker/latest/dg/pre-built-docker-containers-scikit-learn-spark.html
+
 ```bash
 s3://sagemaker-forecasting-aptimyz-data/train.csv
 ```
@@ -20,6 +22,7 @@ Basic AWS Setup
 ```bash
 aws-vault exec aptimyz-env01
 export AWS_REGION=eu-central-1
+export AWS_DEFAULT_REGION=eu-central-1
 
 # Create IAM roles and policies
 just iam-update-pipeline-policy
@@ -87,7 +90,7 @@ aws sagemaker create-auto-ml-job-v2 \
     "DataSource": {
       "S3DataSource": {
         "S3DataType": "S3Prefix",
-        "S3Uri": "s3://sagemaker-forecasting-aptimyz-data/"
+        "S3Uri": "s3://sagemaker-forecasting-aptimyz-input/train"
       }
     }
   }]' \
@@ -106,7 +109,7 @@ aws sagemaker create-auto-ml-job-v2 \
       "CompletionCriteria": {
         "MaxCandidates": 1,
         "MaxAutoMLJobRuntimeInSeconds": 3600,
-        "MaxRuntimePerTrainingJobInSeconds": 600
+        "MaxRuntimePerTrainingJobInSeconds": 60
       }
     }
   }'

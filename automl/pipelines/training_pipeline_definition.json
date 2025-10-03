@@ -3,10 +3,22 @@
     "Metadata": {},
     "Parameters": [
         {
+            "Name": "InputS3Path",
+            "Type": "String",
+            "Description": "S3 Path to input training data",
+            "DefaultValue": "s3://sagemaker-forecasting-aptimyz-input/train/train.csv"
+        },
+        {
             "Name": "OutputS3Path",
             "Type": "String",
             "Description": "S3 Path to output data (reports, models)",
             "DefaultValue": "s3://sagemaker-forecasting-aptimyz-output"
+        },
+        {
+            "Name": "ReportPath",
+            "Type": "String",
+            "Description": "Container local path for the quality report file",
+            "DefaultValue": "/opt/ml/processing/output/report/quality_report.json"
         },
         {
             "Name": "ForecastHorizon",
@@ -38,19 +50,23 @@
                     }
                 },
                 "AppSpecification": {
-                    "ImageUri": "683313688378.dkr.ecr.eu-central-1.amazonaws.com/sagemaker-scikit-learn:0.23-1-cpu-py3",
+                    "ImageUri": "492215442770.dkr.ecr.eu-central-1.amazonaws.com/sagemaker-scikit-learn:1.2-1-cpu-py3",
                     "ContainerEntrypoint": [
                         "python3",
                         "/opt/ml/processing/input/code/data_quality_check.py"
                     ],
                     "ContainerArguments": [
+                        "--input-data",
+                        {
+                            "Get": "Parameters.InputS3Path"
+                        },
                         "--output-data",
                         {
                             "Get": "Parameters.OutputS3Path"
                         },
-                        "--target",
+                        "--report-path",
                         {
-                            "Get": "Parameters.TargetAttribute"
+                            "Get": "Parameters.ReportPath"
                         }
                     ]
                 },
@@ -58,7 +74,9 @@
                     {
                         "InputName": "input-data",
                         "S3Input": {
-                            "S3Uri": "s3://sagemaker-forecasting-aptimyz-input/train/train.csv",
+                            "S3Uri": {
+                                "Get": "Parameters.InputS3Path"
+                            },
                             "LocalPath": "/opt/ml/processing/input/data",
                             "S3DataType": "S3Prefix",
                             "S3InputMode": "File",
@@ -84,7 +102,7 @@
                                 "S3Uri": {
                                     "Get": "Parameters.OutputS3Path"
                                 },
-                                "LocalPath": "/opt/ml/processing/output/report",
+                                "LocalPath": "/opt/ml/processing/output",
                                 "S3UploadMode": "EndOfJob"
                             }
                         }
@@ -93,6 +111,16 @@
                 "RoleArn": {
                     "Get": "Parameters.SageMakerRoleArn"
                 }
+            }
+        },
+        {
+            "Name": "ModelTraining",
+            "Type": "AutoML",
+            "DependsOn": [
+                "DataQualityCheck"
+            ],
+            "Arguments": {
+                "ProblemType": ""
             }
         }
     ]

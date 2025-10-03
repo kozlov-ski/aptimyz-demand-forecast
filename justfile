@@ -12,6 +12,9 @@ data:
 notebook:
     uv run marimo edit notebooks
 
+jupyter:
+    uv run jupyter lab
+
 iam-update-pipeline-policy:
     ./scripts/update_iam_policy.sh SageMakerPipelineServicePolicy SageMakerPipelineServiceRole automl/security/pipeline-service-role-policy.json
 

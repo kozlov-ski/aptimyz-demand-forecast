@@ -1,4 +1,8 @@
 {
+  "python.defaultInterpreterPath": ".venv/bin/python",
+  "python.analysis.extraPaths": [
+    "./scripts"
+  ],
   "json.schemas": [
     {
       "fileMatch": [
@@ -8,5 +12,9 @@
     }
   ],
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "vscode.json-language-features"
+  "editor.defaultFormatter": "vscode.json-language-features",
+  "notebook.formatOnSave.enabled": true,
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff"
+  }
 }
