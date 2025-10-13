@@ -5,3 +5,5 @@ data
 **/joblib_cache/
 **/.cache/
 **/.ipynb_checkpoints/
+.clinerules
+**/.DS_Store
