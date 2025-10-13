@@ -3,4 +3,5 @@ autogluon
 data
 **/__pycache__/
 **/joblib_cache/
+**/.cache/
 **/.ipynb_checkpoints/

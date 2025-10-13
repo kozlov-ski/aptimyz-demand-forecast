@@ -1,5 +1,4 @@
 import logging
-import s3fs
 from sagemaker import Model, PipelineModel
 from sagemaker.automl.automlv2 import (
     AutoMLV2,
@@ -145,14 +144,15 @@ class SageMakerTimeSeriesAutopilot:
             instance_count=instance_count,
             instance_type=instance_type,
             output_path=s3_uri_output,
-            # strategy="SingleRecord",
+            strategy="SingleRecord",
+            max_payload=0,
             # max_concurrent_transforms=1,
         )
 
         transformer.transform(
             data=s3_uri_inference,
             content_type="text/csv;header=present",
-            split_type="Line",
+            split_type="None",
             wait=True,
             logs=False,
         )

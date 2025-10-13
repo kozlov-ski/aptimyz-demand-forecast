@@ -12,9 +12,13 @@
     }
   ],
   "editor.formatOnSave": true,
+  "editor.formatOnType": false,
+  "editor.autoIndent": "keep",
   "editor.defaultFormatter": "vscode.json-language-features",
-  "notebook.formatOnSave.enabled": true,
   "[python]": {
-    "editor.defaultFormatter": "charliermarsh.ruff"
-  }
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnType": false,
+    "editor.autoIndent": "keep"
+  },
+  "notebook.formatOnSave.enabled": true,
 }
