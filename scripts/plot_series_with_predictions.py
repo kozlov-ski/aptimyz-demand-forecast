@@ -1,4 +1,5 @@
-import plotly.graph_objects as go
+import matplotlib.pyplot as plt
+import pandas as pd
 
 
 def plot_series_with_predictions(
@@ -9,6 +10,8 @@ def plot_series_with_predictions(
     date_col="date",
     series_col="series_id",
     target_col="sales",
+    fig=None,
+    ax=None,
 ):
     """
     Plot a time series for a given series_id with true values and predictions.
@@ -24,7 +27,7 @@ def plot_series_with_predictions(
     - target_col: str, column name for sales/true values
 
     Returns:
-    - plotly.graph_objects.Figure
+    - matplotlib.figure.Figure
     """
     # Filter for the specific series
     series_df = (
@@ -52,70 +55,73 @@ def plot_series_with_predictions(
     if len(forecast_df) != horizon:
         raise ValueError(f"Expected {horizon} forecast rows, found {len(forecast_df)}")
 
-    # Create plot
-    fig = go.Figure()
+    # Create plot or use provided fig/ax
+    if fig is None or ax is None:
+        fig, ax = plt.subplots(figsize=(12, 8))
 
     # Plot true sales (historical + forecast period)
-    fig.add_trace(
-        go.Scatter(
-            x=plot_df[date_col],
-            y=plot_df[target_col],
-            mode="lines",
-            name="True Sales",
-            line=dict(color="blue"),
-        )
+    ax.plot(
+        plot_df[date_col],
+        plot_df[target_col],
+        color="blue",
+        label="True Sales",
     )
 
     # Add forecast period marker (vertical line)
     forecast_start_date = forecast_df[date_col].min()
-    fig.add_vline(
-        x=forecast_start_date, line_color="gray", line_dash="dash", opacity=0.7
+    ax.axvline(
+        x=forecast_start_date,
+        color="gray",
+        linestyle="--",
+        alpha=0.7,
+        label="Forecast Start",
     )
 
     # Plot predicted mean for forecast period
-    fig.add_trace(
-        go.Scatter(
-            x=forecast_df[date_col],
-            y=forecast_df["mean"],
-            mode="lines",
-            name="Predicted Mean",
-            line=dict(color="green", width=2),
-        )
+    ax.plot(
+        forecast_df[date_col],
+        forecast_df["mean"],
+        color="green",
+        linewidth=2,
+        label="Predicted Mean",
     )
 
-    # Plot p90 (upper bound for fill)
-    fig.add_trace(
-        go.Scatter(
-            x=forecast_df[date_col],
-            y=forecast_df["p90"],
-            mode="lines",
-            name="P90",
-            line=dict(color="rgba(128,128,128,0.5)", width=1, dash="dash"),
-        )
+    # Plot p90 and p10 bounds with fill between
+    ax.fill_between(
+        forecast_df[date_col],
+        forecast_df["p10"],
+        forecast_df["p90"],
+        color="gray",
+        alpha=0.2,
+        label="90% Confidence Interval",
     )
 
-    # Plot p10 (lower bound, with fill to p90)
-    fig.add_trace(
-        go.Scatter(
-            x=forecast_df[date_col],
-            y=forecast_df["p10"],
-            mode="lines",
-            name="P10",
-            line=dict(color="rgba(128,128,128,0.5)", width=1, dash="dash"),
-            fill="tonexty",  # Fill to previous trace (p90)
-            fillcolor="rgba(128,128,128,0.2)",
-        )
+    # Plot p90 dashed line
+    ax.plot(
+        forecast_df[date_col],
+        forecast_df["p90"],
+        color="darkgray",
+        linewidth=1,
+        linestyle="--",
+        label="P90",
+    )
+
+    # Plot p10 dashed line
+    ax.plot(
+        forecast_df[date_col],
+        forecast_df["p10"],
+        color="darkgray",
+        linewidth=1,
+        linestyle="--",
+        label="P10",
     )
 
     # Update layout
-    fig.update_layout(
-        title=f"Time Series Prediction for {series_id}",
-        xaxis_title=date_col,
-        yaxis_title=target_col,
-        showlegend=True,
-        legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5),
-        xaxis=dict(showgrid=True),
-        yaxis=dict(showgrid=True),
-    )
+    ax.set_title(f"Time Series Prediction for {series_id}")
+    ax.set_xlabel(date_col)
+    ax.set_ylabel(target_col)
+    ax.grid(True, alpha=0.3)
+    ax.legend()
+    plt.tight_layout()
 
     return fig

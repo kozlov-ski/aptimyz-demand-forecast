@@ -1,4 +1,4 @@
-import plotly.graph_objects as go
+import matplotlib.pyplot as plt
 
 
 def plot_series_train_test_split(
@@ -9,6 +9,8 @@ def plot_series_train_test_split(
     date_col="date",
     series_col="series_id",
     target_col="sales",
+    fig=None,
+    ax=None,
 ):
     """
     Plot a time series for a given series_id with train/test split indication.
@@ -23,7 +25,7 @@ def plot_series_train_test_split(
     - target_col: str, column name for sales/target
 
     Returns:
-    - plotly.graph_objects.Figure
+    - matplotlib.figure.Figure
     """
     # Filter for the specific series
     series_df = (
@@ -51,38 +53,33 @@ def plot_series_train_test_split(
     train_df = series_df.iloc[:split_idx].copy()
     test_df = series_df.iloc[split_idx:].copy()
 
-    # Create plot
-    fig = go.Figure()
+    # Create plot or use provided fig/ax
+    if fig is None or ax is None:
+        fig, ax = plt.subplots(figsize=(12, 8))
 
     # Plot train series line (solid)
-    fig.add_trace(
-        go.Scatter(
-            x=train_df[date_col],
-            y=train_df[target_col],
-            mode="lines",
-            name="Train",
-            line=dict(color="blue"),
-        )
+    ax.plot(
+        train_df[date_col],
+        train_df[target_col],
+        color="blue",
+        label="Train",
     )
 
     # Plot test series line (dashed)
-    fig.add_trace(
-        go.Scatter(
-            x=test_df[date_col],
-            y=test_df[target_col],
-            mode="lines",
-            name="Test (Ground Truth)",
-            line=dict(color="red", dash="dot"),
-        )
+    ax.plot(
+        test_df[date_col],
+        test_df[target_col],
+        color="red",
+        linestyle="dotted",
+        label="Test (Ground Truth)",
     )
 
     # Update layout
-    fig.update_layout(
-        title="Train/Test Split",
-        xaxis_title=date_col,
-        yaxis_title=target_col,
-        showlegend=True,
-        legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5),
-    )
+    ax.set_title("Train/Test Split")
+    ax.set_xlabel(date_col)
+    ax.set_ylabel(target_col)
+    ax.legend()
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
 
     return fig
