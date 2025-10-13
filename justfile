@@ -9,9 +9,6 @@ data:
     uv run kaggle competitions download -c demand-forecasting-kernels-only
     unzip -q demand-forecasting-kernels-only.zip
 
-notebook:
-    uv run marimo edit notebooks
-
 jupyter:
     uv run jupyter lab
 
