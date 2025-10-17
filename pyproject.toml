@@ -8,6 +8,7 @@ dependencies = [
     "autogluon>=1.4.0",
     "fev>=0.6.0",
     "gdrive-fsspec>=0.2.0",
+    "holidays>=0.82",
     "joblib>=1.5.2",
     "sagemaker>=2.251.1",
 ]
